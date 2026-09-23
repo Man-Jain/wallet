@@ -29,8 +29,11 @@ export type ITransactionType =
   | 'swap'
   | 'update-procedure-threshold';
 
-/** Which cross-chain bridge route a `bridged-send` used. */
-export type IBridgeProvider = 'epoch' | 'agglayer';
+/**
+ * Which cross-chain bridge route a bridge row used. `usdcx` is Circle xReserve
+ * (Sepolia USDC → USDCx on Miden) and is bridge-in only today.
+ */
+export type IBridgeProvider = 'epoch' | 'agglayer' | 'usdcx';
 
 /** Lifecycle of a tracking-only EVM → Miden bridge row. */
 export type IBridgedReceivePhase = 'submitting' | 'delivering' | 'ready' | 'received' | 'failed';
