@@ -12,6 +12,7 @@
 
 ### Changes
 
+- [CHANGE][all] USDCx bridge history details show Confirmed once Circle returns an attestation for the configured destination domain. Attestation checks run every 12 seconds while the details or deposit-status screen is open.
 - [CHANGE][all] Send's review page is quieter: the address in body text, the network as a plain value, no fee note, "Expires" with Edit, and the reclaim reassurance as one caption under the card.
 - [CHANGE][all] Send's first page is titled like the other tabs, its address field fits two lines on a small phone and Paste, Address Book and Scan stay on one row.
 - [CHANGE][all] Explore is reorganised like an app store: featured app, categories, grouped lists and recents, with the tab bars' bouncy motion. Search moves to a header button as on Activity: it narrows the apps as you type and opens a typed or pasted URL.
