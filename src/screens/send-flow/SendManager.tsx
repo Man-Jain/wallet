@@ -21,6 +21,7 @@ import { isMobile } from 'lib/platform';
 import { isScanAvailable, scanQRCode } from 'lib/qr';
 import { useWalletStore } from 'lib/store';
 import { useRouteDwell } from 'lib/telemetry/use-route-dwell';
+import { isUsdcxWithdrawalAvailable } from 'lib/usdcx/withdrawal';
 import { navigate, useLocation } from 'lib/woozie';
 import {
   detectAddressChain,
@@ -366,12 +367,18 @@ export const SendManager: React.FC<SendManagerProps> = ({
     }
   }, [token, amount]);
 
+  const usdcxAvailable = isUsdcxWithdrawalAvailable(token?.id);
+  useEffect(() => {
+    if (usdcxAvailable && bridgeRoute !== 'usdcx') setValue('bridgeRoute', 'usdcx');
+    if (!usdcxAvailable && bridgeRoute === 'usdcx') setValue('bridgeRoute', 'epoch');
+  }, [usdcxAvailable, bridgeRoute, setValue]);
+
   const epochQuote = useEpochQuote({
     amount: amountBaseUnits,
     faucetId: token?.id,
     destinationAddress: recipientAddress,
     senderPublicKey: publicKey ?? undefined,
-    enabled: isBridge
+    enabled: isBridge && !usdcxAvailable
   });
 
   // E2E-only hook: mirror the forward-quote's state so the harness can assert on
@@ -820,6 +827,7 @@ export const SendManager: React.FC<SendManagerProps> = ({
         case SendFlowStep.Route:
           return (
             <SendRoute
+              usdcxAvailable={usdcxAvailable}
               route={bridgeRoute ?? 'epoch'}
               onRouteChange={onRouteChange}
               fastFeeUsd={fastFeeUsd}
@@ -858,6 +866,7 @@ export const SendManager: React.FC<SendManagerProps> = ({
       displayedNetwork,
       selectedContact?.name,
       bridgeRoute,
+      usdcxAvailable,
       onRouteChange,
       fastFeeUsd,
       epochQuote.loading,

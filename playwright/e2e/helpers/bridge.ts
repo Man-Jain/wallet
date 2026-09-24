@@ -198,6 +198,7 @@ export interface BridgedSendRow {
   transactionId?: string;
   outputNoteIds?: string[];
   extraInputs?: {
+    usdcxBurn?: { noteId: string; destinationDomain: number; phase: string; lastError?: string };
     intentNonce?: string;
     outputAmount?: string;
     evmTxHash?: string;
@@ -298,6 +299,7 @@ export async function readBridgedSendRows(page: Page): Promise<BridgedSendRow[]>
         rawError?: string;
         outputNoteIds?: string[];
         extraInputs?: {
+          usdcxBurn?: { noteId: string; destinationDomain: number; phase: string; lastError?: string };
           intentNonce?: string;
           outputAmount?: string;
           evmTxHash?: string;

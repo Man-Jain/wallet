@@ -40,6 +40,16 @@ export const BridgeSuccess: FC<BridgeSuccessProps> = ({
   const { amountText, feeText } = useReceiptAmount(transaction);
   const destinationAddress = bridgedInputs.destinationAddress ?? transaction?.secondaryAccountId;
   const recipient = destinationAddress ? truncateAddress(destinationAddress, false, 8, 8) : undefined;
+  const isUsdcx = bridgedInputs.provider === 'usdcx';
+  const burnPhase = bridgedInputs.usdcxBurn?.phase;
+  const burnTitle =
+    burnPhase === 'confirmed'
+      ? 'usdcxBurnConfirmed'
+      : burnPhase === 'discarded'
+        ? 'usdcxBurnDiscarded'
+        : burnPhase === 'consuming'
+          ? 'usdcxBurnConsuming'
+          : 'usdcxBurnSubmitted';
 
   const rows = useMemo(
     () =>
@@ -49,16 +59,16 @@ export const BridgeSuccess: FC<BridgeSuccessProps> = ({
         feeText,
         txHash,
         onViewExplorer,
-        route: bridgeSpeedLabel(t, bridgedInputs.provider),
-        routeSub: bridgeRouteValue(t, bridgedInputs.provider)
+        route: isUsdcx ? t('usdcxRouteLabel') : bridgeSpeedLabel(t, bridgedInputs.provider),
+        routeSub: isUsdcx ? undefined : bridgeRouteValue(t, bridgedInputs.provider)
       }),
-    [amountText, bridgedInputs.provider, destinationAddress, feeText, onViewExplorer, t, txHash]
+    [amountText, bridgedInputs.provider, destinationAddress, feeText, isUsdcx, onViewExplorer, t, txHash]
   );
 
   return (
     <TransactionSuccessLayout
       headerTitle=""
-      title={t('paymentSent', { defaultValue: 'Payment Sent!' })}
+      title={isUsdcx ? t(burnTitle) : t('paymentSent', { defaultValue: 'Payment Sent!' })}
       primaryAction={{ label: t('done'), onClick: onDoneClick, variant: ButtonVariant.Primary }}
       secondaryAction={{
         label: t('viewInActivities'),
@@ -69,6 +79,7 @@ export const BridgeSuccess: FC<BridgeSuccessProps> = ({
     >
       <SuccessSummaryPill lhs={amountText} rhs={recipient} />
       <ReceiptRows rows={rows} className="mt-6" />
+      {isUsdcx && <p className="mt-4 text-caption text-muted">{t('usdcxBurnTestNotice')}</p>}
     </TransactionSuccessLayout>
   );
 };
